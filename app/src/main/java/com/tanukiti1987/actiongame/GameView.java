@@ -10,7 +10,7 @@ import android.view.View;
 /**
  * Created by tanukiti1987 on 2015/01/25.
  */
-public class GameView extends View {
+public class GameView extends View implements Droid.Callback {
 
     private static final int START_GROUND_HEIGHT = 50;
     private Ground ground;
@@ -26,7 +26,7 @@ public class GameView extends View {
 
         if (droid == null) {
             Bitmap bitmap = BitmapFactory.decodeResource(getResources(), R.drawable.droid);
-            droid = new Droid(bitmap, 0, 0);
+            droid = new Droid(bitmap, 0, 0, this);
         }
 
         if (ground == null) {
@@ -39,5 +39,10 @@ public class GameView extends View {
         ground.draw(canvas);
 
         invalidate();
+    }
+
+    @Override
+    public int getDistanceFromGround(Droid droid){
+        return ground.rect.top - droid.rect.bottom;
     }
 }

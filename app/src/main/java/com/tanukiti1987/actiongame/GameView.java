@@ -5,6 +5,7 @@ import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.graphics.Canvas;
 import android.graphics.Color;
+import android.os.Handler;
 import android.view.MotionEvent;
 import android.view.SurfaceHolder;
 import android.view.SurfaceView;
@@ -88,8 +89,23 @@ public class GameView extends SurfaceView implements Droid.Callback, SurfaceHold
     private long touchDownStartTime;
     private static final int GROUND_MOVE_TO_LEFT = 10;
 
+    private Callback callback;
+    private final Handler handler;
+    private boolean isGameOver;
+
+    public interface Callback {
+        public void onGameOver();
+    }
+
+    public void setCallback(Callback callback) {
+        this.callback = callback;
+    }
+
     public GameView(Context context) {
         super(context);
+
+        handler = new Handler();
+
         getHolder().addCallback(this);
     }
 
@@ -152,7 +168,12 @@ public class GameView extends SurfaceView implements Droid.Callback, SurfaceHold
             boolean horizontal = !(droid.rect.left >= ground.rect.right ||
                     droid.rect.right <= ground.rect.left);
             if (horizontal) {
-                return ground.rect.top - droid.rect.bottom;
+                int distanceFromGround =  ground.rect.top - droid.rect.bottom;
+                if (distanceFromGround < 0) {
+                    gameOver();
+                    return Integer.MAX_VALUE;
+                }
+                return distanceFromGround;
             }
         }
 
@@ -185,5 +206,22 @@ public class GameView extends SurfaceView implements Droid.Callback, SurfaceHold
         }
 
         droid.jump(time / MAX_TOUCH_TIME);
+    }
+
+    private void gameOver() {
+        if (isGameOver) {
+            return;
+        }
+
+        isGameOver = true;
+
+        droid.shutdown();
+
+        handler.post(new Runnable() {
+            @Override
+            public void run() {
+                callback.onGameOver();
+            }
+        });
     }
 }

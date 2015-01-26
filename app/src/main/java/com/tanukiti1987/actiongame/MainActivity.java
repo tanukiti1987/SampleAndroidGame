@@ -4,9 +4,10 @@ import android.support.v7.app.ActionBarActivity;
 import android.os.Bundle;
 import android.view.Menu;
 import android.view.MenuItem;
+import android.widget.Toast;
 
 
-public class MainActivity extends ActionBarActivity {
+public class MainActivity extends ActionBarActivity implements GameView.Callback {
 
     private GameView gameView;
 
@@ -15,8 +16,14 @@ public class MainActivity extends ActionBarActivity {
         super.onCreate(savedInstanceState);
 
         gameView = new GameView(this);
+        gameView.setCallback(this);
 
         setContentView(gameView);
+    }
+
+    @Override
+    public void onGameOver() {
+        Toast.makeText(this, "Game Over", Toast.LENGTH_LONG).show();
     }
 
 

@@ -19,6 +19,14 @@ public class Ground {
         paint.setColor(Color.rgb(153, 76, 0)); // brown
     }
 
+    public boolean isShown(int width, int height) {
+        return rect.intersects(0, 0, width, height);
+    }
+
+    public boolean isAvailable() {
+        return rect.right > 0;
+    }
+
     public void draw(Canvas canvas) {
         canvas.drawRect(rect, paint);
     }

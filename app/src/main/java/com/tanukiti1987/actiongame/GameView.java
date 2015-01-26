@@ -18,6 +18,7 @@ public class GameView extends View implements Droid.Callback {
     private Ground ground;
     private Droid droid;
     private long touchDownStartTime;
+    private static final int GROUND_MOVE_TO_LEFT = 10;
 
     public GameView(Context context) {
         super(context);
@@ -37,8 +38,9 @@ public class GameView extends View implements Droid.Callback {
         }
 
         droid.move();
-
         droid.draw(canvas);
+
+        ground.move(GROUND_MOVE_TO_LEFT);
         ground.draw(canvas);
 
         invalidate();
@@ -46,6 +48,13 @@ public class GameView extends View implements Droid.Callback {
 
     @Override
     public int getDistanceFromGround(Droid droid){
+        boolean horizontal = !(droid.rect.left >= ground.rect.right
+                || droid.rect.right <= ground.rect.left);
+
+        if (!horizontal) {
+            return Integer.MAX_VALUE;
+        }
+
         return ground.rect.top - droid.rect.bottom;
     }
 

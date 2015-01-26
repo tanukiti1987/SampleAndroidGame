@@ -15,6 +15,9 @@ public class Droid {
     }
 
     private final Callback callback;
+    private static final float GRAVITY = 0.8f;
+    private static final float WEIGHT = GRAVITY * 60;
+    private float acceleration = 0;
 
     private final Paint paint = new Paint();
     private Bitmap bitmap;
@@ -30,12 +33,18 @@ public class Droid {
         canvas.drawBitmap(bitmap, rect.left, rect.top, paint);
     }
 
+    public void jump(float power) {
+        acceleration = power * WEIGHT;
+    }
+
     public void move() {
+        acceleration -= GRAVITY;
         int distanceFromGround = callback.getDistanceFromGround(this);
-        if (distanceFromGround <= 0) {
-            return;
+
+        if (acceleration < 0 && acceleration < -distanceFromGround) {
+            acceleration = -distanceFromGround;
         }
 
-        rect.offset(0, 5); // to the ground
+        rect.offset(0, -Math.round(acceleration));
     }
 }
